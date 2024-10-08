@@ -7,12 +7,32 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App
       notes={[
-        { id: 0, note: "html is good", important: true },
-        { id: 1, note: "css sucks", important: false },
-        { id: 2, note: "html is good", important: true },
-        { id: 3, note: "css sucks", important: false },
-        { id: 4, note: "html is good", important: true },
-        { id: 5, note: "css sucks", important: false },
+        { id: 0, note: "html is difficult", important: true },
+        {
+          id: 1,
+          note: "Boostrap and tailwind are css frameworks",
+          important: false,
+        },
+        {
+          id: 2,
+          note: "React was created by facebook engineers",
+          important: true,
+        },
+        {
+          id: 3,
+          note: "Python is used mostly for AI development",
+          important: false,
+        },
+        {
+          id: 4,
+          note: "Javascript is the web development king",
+          important: true,
+        },
+        {
+          id: 5,
+          note: "Netlify is a tool to deploy websites",
+          important: false,
+        },
       ]}
     />
   </StrictMode>
