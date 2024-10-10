@@ -1,12 +1,14 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Course from "./components/Course.jsx";
 import Note from "./components/Note.jsx";
 import Form from "./components/Form.jsx";
 import Filter from "./components/Filter.jsx";
+import noteService from "./services/notes";
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
   const courses = [
@@ -56,14 +58,40 @@ const App = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newNotes = [...notes, { id: notes.length, note: newNote }];
-    setNotes(newNotes);
-    setNewNote("");
+    noteService
+      .create({
+        id: notes.length + 1 + "",
+        content: newNote,
+        important: Math.random() < 0.5,
+      })
+      .then((response) => {
+        setNotes((prevNotes) => prevNotes.concat(response.data));
+        setNewNote("");
+      });
+  };
+
+  const toggleImportanceOf = (id) => {
+    const FoundNote = notes.find((note) => note.id == id);
+    FoundNote.important = !FoundNote.important;
+    noteService
+      .update(id, FoundNote)
+      .then((response) =>
+        setNotes(notes.map((note) => (note.id !== id ? note : response.data)))
+      )
+      .catch((error) => {
+        alert(`The note ${note.content} was already deleted from the server`);
+        setNotes(notes.filter((note) => note.id !== id));
+      });
   };
 
   const handleNoteChange = (e) => {
     setNewNote(e.target.value);
   };
+
+  useEffect(() => {
+    noteService.getAll().then((response) => setNotes(response.data));
+  }),
+    [];
 
   return (
     <div>
@@ -79,7 +107,11 @@ const App = (props) => {
         {notes
           .filter((note) => (showAll ? true : note.important))
           .map((note) => (
-            <Note key={note.id} note={note} />
+            <Note
+              key={note.id}
+              note={note}
+              toggleImportanceOf={toggleImportanceOf}
+            />
           ))}
       </ul>
       <Form
